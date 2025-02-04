@@ -28,7 +28,7 @@ namespace Text_Rpg
         public int OwnEquipmentIdx { get; set; } // 소유 장비 번호
         public Player() // 플레이어 클래스 생성자
         {
-            Level = 01;
+            Level = 1;
             Name = "Name";
             Job = "job";
             AttackPower = 10f;
@@ -57,7 +57,7 @@ namespace Text_Rpg
             AttackPower = attackPower;
             DefensePower = defensePower;
             Price = price;
-            OwnEquipmentIdx = 0;
+            OwnEquipmentIdx = -1;
             PurchaseItem = false;
             EquippedItem = false;
         }
@@ -137,7 +137,7 @@ namespace Text_Rpg
                 Console.Clear();
                 Console.WriteLine("상태 보기");
                 Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
-                Console.WriteLine("LV {0}", player.Level);
+                Console.WriteLine("LV {0}", string.Format("{0:D2}", player.Level));
                 Console.WriteLine("이름 : {0}, ( {1} )", player.Name, player.Job);
                 Console.WriteLine("공격력 :  {0}(+{1})", player.AttackPower, player.AttackPower - 10f);
                 Console.WriteLine("방어력 :  {0}(+{1})", player.DefensePower, player.DefensePower - 5f);
@@ -166,19 +166,35 @@ namespace Text_Rpg
                 Console.WriteLine("인벤토리");
                 Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
                 Console.WriteLine("[아이템 목록]\n");
-                for (int i = 0; i < player.OwnEquipmentIdx; i++)
+                for (int i = 0; i < items.Count; i++) // 전체 장비 갯수만큼 반복
                 {
-                    for (int j = 0; j < items.Count; j++)
+                    if (items[i].PurchaseItem) // 장비를 소유하고 있는지 확인
                     {
-                        if (items[i].OwnEquipmentIdx == i)
-                            if (items[j].AttackPower > 0 && items[j].DefensePower > 0) Console.WriteLine($"- {items[j].ItemName} | 공격력 +{items[j].AttackPower} | 방어력 +{items[j].DefensePower} | {items[j].ItemInfo}"); // 공격력 O 방어력 O
-                            else if (items[j].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- {items[j].ItemName} | 공격력 +{items[j].AttackPower}  | {items[j].ItemInfo}"); // 공격력 O 방어력 X
-                            else Console.WriteLine($"- {items[j].ItemName} | 방어력 +{items[j].DefensePower}  | {items[j].ItemInfo}");
-                        else continue;
+                        for (int j = 0; j < player.OwnEquipmentIdx; j++) // 소유 장비 갯수만큼 반복
+                        {
+                            if (items[j].OwnEquipmentIdx == j)
+                            {
+                                if (items[i].EquippedItem)
+                                {
+                                    if (items[i].AttackPower > 0 && items[i].DefensePower > 0) Console.WriteLine($"- [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower} | 방어력 +{items[i].DefensePower} | {items[i].ItemInfo}"); // 공격력 O 방어력 O
+                                    else if (items[i].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
+                                    else Console.WriteLine($"- [E]{items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
+                                }
+                                else
+                                {
+                                    if (items[i].AttackPower > 0 && items[i].DefensePower > 0) Console.WriteLine($"- {items[i].ItemName} | 공격력 +{items[i].AttackPower} | 방어력 +{items[i].DefensePower} | {items[i].ItemInfo}"); // 공격력 O 방어력 O
+                                    else if (items[i].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- {items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
+                                    else Console.WriteLine($"- {items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
+                                }
+                            }
+                            else continue;
+
+                        }
                     }
+                    else continue;
                 }
                 Console.WriteLine("1. 장착 관리");
-                Console.WriteLine("0. 나가기");
+                Console.WriteLine("0. 나가기"); 
                 Console.Write("\n원하시는 행동을 입력해주세요. \n>>");
                 try
                 {
@@ -204,26 +220,41 @@ namespace Text_Rpg
             }
         }
 
-        //장비 관리
+        //장착 관리
         public void EquipmentManagement(Player player, List<Item> items)
         {
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("인벤토리 - 장비관리");
+                Console.WriteLine("인벤토리 - 장착 관리");
                 Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
-                Console.WriteLine("[보유 골드] : {0}\n", player.Gold);
                 Console.WriteLine("[ 아이템 목록 ]\n");
-                for (int i = 0; i < player.OwnEquipmentIdx; i++)
+                for (int i = 0; i < items.Count; i++) // 전체 장비 갯수만큼 반복
                 {
-                    for (int j = 0; j < items.Count; j++)
+                    if (items[i].PurchaseItem) // 장비를 소유하고 있는지 확인
                     {
-                        if (items[i].OwnEquipmentIdx == i)
-                            if (items[j].AttackPower > 0 && items[j].DefensePower > 0) Console.WriteLine($"- {i + 1}. {items[j].ItemName} | 공격력 +{items[j].AttackPower} | 방어력 +{items[j].DefensePower} | {items[j].ItemInfo}"); // 공격력 O 방어력 O
-                            else if (items[j].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- {i + 1}. {items[j].ItemName} | 공격력 +{items[j].AttackPower}  | {items[j].ItemInfo}"); // 공격력 O 방어력 X
-                            else Console.WriteLine($"- {i + 1}. {items[j].ItemName} | 방어력 +{items[j].DefensePower}  | {items[j].ItemInfo}");
-                        else continue;
+                        for (int j = 0; j < player.OwnEquipmentIdx; j++) // 소유 장비 갯수만큼 반복
+                        {
+                            if (items[i].OwnEquipmentIdx == j)
+                            {
+                                if (items[i].EquippedItem)
+                                {
+                                    if (items[i].AttackPower > 0 && items[i].DefensePower > 0) Console.WriteLine($"- {j + 1}. [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower} | 방어력 +{items[i].DefensePower} | {items[i].ItemInfo}"); // 공격력 O 방어력 O
+                                    else if (items[i].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- {j + 1}. [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
+                                    else Console.WriteLine($"- {j + 1}. [E]{items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
+                                }
+                                else
+                                {
+                                    if (items[i].AttackPower > 0 && items[i].DefensePower > 0) Console.WriteLine($"- {j + 1}. {items[i].ItemName} | 공격력 +{items[i].AttackPower} | 방어력 +{items[i].DefensePower} | {items[i].ItemInfo}"); // 공격력 O 방어력 O
+                                    else if (items[i].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- {j + 1}. {items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
+                                    else Console.WriteLine($"- {j + 1}. {items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
+                                }
+                            }
+                            else continue;
+
+                        }
                     }
+                    else continue;
                 }
                 Console.WriteLine("\n0. 나가기");
                 Console.Write("\n원하시는 행동을 입력해주세요. \n>>");
@@ -240,18 +271,53 @@ namespace Text_Rpg
                         case 4:
                         case 5:
                         case 6:
-                            if (IvnInput < player.OwnEquipmentIdx)
+                            if (IvnInput-1 < player.OwnEquipmentIdx) // 선택번호가 소유 장비보다 적은지 확인
                             {
                                 for (int i = 0; i < items.Count; i++) // 전체 장비 갯수만큼 반복
                                 {
-                                    if (items[i].OwnEquipmentIdx == IvnInput)// 소유장비 번호 비교
-                                        if (items[i].AttackPower > 0 && items[j].DefensePower > 0) 
+                                    if (items[i].OwnEquipmentIdx == IvnInput - 1 )// 소유장비 번호 비교
+                                        // 장비 해제
+                                        if (items[i].EquippedItem) 
                                         {
-                                            player.AttackPower += items[i].AttackPower;
-                                            player.DefensePower += items[i].DefensePower;
+                                            if (items[i].AttackPower > 0 && items[i].DefensePower > 0)
+                                            {
+                                                player.AttackPower -= items[i].AttackPower;
+                                                player.DefensePower -= items[i].DefensePower;
+                                                items[i].EquippedItem = false;
+                                            }
+                                            else if (items[i].AttackPower > 0 && items[i].DefensePower < 0)
+                                            {
+                                                player.AttackPower -= items[i].AttackPower;
+                                                items[i].EquippedItem = false;
+                                            }
+
+                                            else 
+                                            {
+                                                player.DefensePower -= items[i].DefensePower;
+                                                items[i].EquippedItem = false;
+                                            }
                                         }
-                                        else if (items[j].AttackPower > 0 && items[j].DefensePower < 0) Console.WriteLine($"- {i + 1}. {items[j].ItemName} | 공격력 +{items[j].AttackPower}  | {items[j].ItemInfo}"); // 공격력 O 방어력 X
-                                        else Console.WriteLine($"- {i + 1}. {items[j].ItemName} | 방어력 +{items[j].DefensePower}  | {items[j].ItemInfo}");
+                                        // 장비 장착
+                                        else
+                                        {
+                                            if (items[i].AttackPower > 0 && items[i].DefensePower > 0)
+                                            {
+                                                player.AttackPower += items[i].AttackPower;
+                                                player.DefensePower += items[i].DefensePower;
+                                                items[i].EquippedItem = true;
+                                            }
+                                            else if (items[i].AttackPower > 0 && items[i].DefensePower < 0)
+                                            {
+                                                player.AttackPower += items[i].AttackPower;
+                                                items[i].EquippedItem = true;
+                                            }
+
+                                            else
+                                            {
+                                                player.DefensePower += items[i].DefensePower;
+                                                items[i].EquippedItem = true;
+                                            }
+                                        }
                                     else continue;
                                 }
                             }
@@ -317,8 +383,8 @@ namespace Text_Rpg
                 Console.WriteLine("[ 아이템 목록 ]\n");
                 for (int i = 0; i < items.Count; i++)
                 {
-                    if (items[i].PurchaseItem) Console.WriteLine($"-  {i + 1}. {items[i].ItemName} | {items[i].ItemInfo} | 구매 완료");
-                    else Console.WriteLine($"- {items[i].ItemName} | {items[i].ItemInfo} | {items[i].Price}G");
+                    if (items[i].PurchaseItem) Console.WriteLine($"- {i + 1}.{items[i].ItemName} | {items[i].ItemInfo} | 구매 완료");
+                    else Console.WriteLine($"- {i + 1}.{items[i].ItemName} | {items[i].ItemInfo} | {items[i].Price}G");
                 }
                 Console.WriteLine("\n0. 나가기");
                 Console.Write("\n원하시는 행동을 입력해주세요. \n>>");
@@ -339,8 +405,8 @@ namespace Text_Rpg
                             {
                                 items[STInput - 1].PurchaseItem = true;
                                 player.Gold -= items[STInput - 1].Price;
-                                OwnEquipmentIdx(player, items, STInput);
-                                Console.WriteLine($"{items[STInput - 1].ItemName}를(을) 구매를 완료했습니다.");
+                                OwnEquipmentIdx(player, items, STInput-1);
+                                Console.WriteLine($"{items[STInput - 1].ItemName}를(을) 구매했습니다.");
                                 Console.ReadKey();
                             }
                             else
@@ -363,7 +429,8 @@ namespace Text_Rpg
         //장비 갯수
         public void OwnEquipmentIdx(Player player, List<Item> items, int STInput)
         {
-            items[STInput].OwnEquipmentIdx = player.OwnEquipmentIdx++;
+            items[STInput].OwnEquipmentIdx++;
+            player.OwnEquipmentIdx++;
         }
         //던전
         public void Dungeon(Player player)
@@ -401,12 +468,10 @@ namespace Text_Rpg
                 Console.WriteLine();
                 string Name = Console.ReadLine();
                 Console.WriteLine();
-                Console.WriteLine("입력하신 이름은 {0} 입니다.", Name);
-                Console.WriteLine();
+                Console.WriteLine("입력하신 이름은 {0} 입니다\n", Name);
                 Console.WriteLine("1. 저장");
                 Console.WriteLine("2. 취소");
-                Console.WriteLine();
-                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write("\n원하시는 행동을 입력해주세요. \n>>");
                 int NameSelect = int.Parse(Console.ReadLine());
                 if (NameSelect == 1)
                 {
@@ -425,13 +490,10 @@ namespace Text_Rpg
             {
                 Console.Clear();
                 Console.WriteLine("스파르타 던전에 오신 여러분 환영합니다.");
-                Console.WriteLine("원하시는 직업을 선택해주세요.");
-                Console.WriteLine();
-                Console.WriteLine();
+                Console.WriteLine("원하시는 직업을 선택해주세요.\n");
                 Console.WriteLine("1. 전사");
                 Console.WriteLine("2. 도적");
-                Console.WriteLine();
-                Console.WriteLine("원하시는 행동을 입력해주세요.");
+                Console.Write("\n원하시는 행동을 입력해주세요. \n>>");
                 int JobSelect = int.Parse(Console.ReadLine());
                 if (JobSelect == 1)
                 {
