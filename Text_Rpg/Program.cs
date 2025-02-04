@@ -86,6 +86,8 @@ namespace Text_Rpg
                 Console.WriteLine("1. 상태 보기");
                 Console.WriteLine("2. 인벤토리");
                 Console.WriteLine("3. 상점");
+                Console.WriteLine("4. 던전입장");
+                Console.WriteLine("5. 휴식하기");
                 Console.Write("\n원하시는 행동을 입력해주세요. \n>>");
                 try
                 {
@@ -440,7 +442,47 @@ namespace Text_Rpg
         //휴식
         public void Rest(Player player)
         {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("휴식하기");
+                Console.WriteLine("500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {0} G \n))", player.Gold);
+                Console.WriteLine("1. 휴식하기");
+                Console.WriteLine("0. 나가기");
+                Console.Write("\n원하시는 행동을 입력해주세요.\n>>");
+                try
+                {
+                    int RestInput = int.Parse(Console.ReadLine());
+                    switch (RestInput)
+                    {
+                        case 0: break;
 
+                        case 1:
+                            if (player.Hp < 100)
+                            {
+                                player.Gold = -500;
+                                player.Hp = 100;
+                                Console.WriteLine("회복이 완료되었습니다.");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                Console.WriteLine("체력이 최대치입니다.");
+                                Console.ReadKey();
+                            }
+                            break;
+
+                        default:
+                            GoBack();
+                            break;
+                    }
+                    if (RestInput == 0) break;
+                }
+                catch
+                {
+                    GoBack();
+                }
+            }
         }
         //게임저장
         public void SaveGame(Player player)
