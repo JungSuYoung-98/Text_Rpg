@@ -20,6 +20,7 @@
             DefensePower = 5f;
             Hp = 100;
             Gold = 100000;
+            Gold = 1500;
             OwnEquipmentIdx = 0;
         }
     }
@@ -166,13 +167,13 @@
                                 if (items[i].EquippedItem) // 장착중인지 확인
                                 {
                                     if (items[i].AttackPower > 0 && items[i].DefensePower > 0) Console.WriteLine($"- [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower} | 방어력 +{items[i].DefensePower} | {items[i].ItemInfo}"); // 공격력 O 방어력 O
-                                    else if (items[i].AttackPower > 0 && items[i].DefensePower < 0) Console.WriteLine($"- [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
-                                    else Console.WriteLine($"-[E]{items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
+                                    else if (items[i].AttackPower > 0 && items[i].DefensePower <= 0) Console.WriteLine($"- [E]{items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
+                                    else Console.WriteLine($"- [E]{items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
                                 }
                                 else
                                 {
                                     if (items[i].AttackPower > 0 && items[i].DefensePower > 0) Console.WriteLine($"- {items[i].ItemName} | 공격력 +{items[i].AttackPower} | 방어력 +{items[i].DefensePower} | {items[i].ItemInfo}"); // 공격력 O 방어력 O
-                                    else if (items[i].AttackPower > 0 && items[i].DefensePower < 0) Console.WriteLine($"- {items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
+                                    else if (items[i].AttackPower > 0 && items[i].DefensePower <= 0) Console.WriteLine($"- {items[i].ItemName} | 공격력 +{items[i].AttackPower}  | {items[i].ItemInfo}"); // 공격력 O 방어력 X
                                     else Console.WriteLine($"- {items[i].ItemName} | 방어력 +{items[i].DefensePower}  | {items[i].ItemInfo}");
                                 }
                             }
@@ -276,7 +277,7 @@
                                                 items[i].EquippedItem = false;
                                                 break;
                                             }
-                                            else if (items[i].AttackPower > 0 && items[i].DefensePower < 0)
+                                            else if (items[i].AttackPower > 0 && items[i].DefensePower <= 0)
                                             {
                                                 player.AttackPower -= items[i].AttackPower;
                                                 items[i].EquippedItem = false;
@@ -293,13 +294,14 @@
                                         // 장비 장착
                                         else
                                         {
+                                            
                                             if (items[i].AttackPower > 0 && items[i].DefensePower > 0)
                                             {
                                                 player.AttackPower += items[i].AttackPower;
                                                 player.DefensePower += items[i].DefensePower;
                                                 items[i].EquippedItem = true;
                                             }
-                                            else if (items[i].AttackPower > 0 && items[i].DefensePower < 0)
+                                            else if (items[i].AttackPower > 0 && items[i].DefensePower <= 0)
                                             {
                                                 player.AttackPower += items[i].AttackPower;
                                                 items[i].EquippedItem = true;
@@ -430,7 +432,6 @@
                                 items[BuyInput - 1].OwnEquipmentIdx = player.OwnEquipmentIdx;
                                 player.OwnEquipmentIdx++;
                                 Console.WriteLine($"{items[BuyInput - 1].ItemName}를(을) 구매했습니다.");
-                                Console.WriteLine($"{items[BuyInput - 1].OwnEquipmentIdx}를(을) 구매했습니다.");
                                 Console.ReadKey();
                             }
                             else
